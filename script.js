@@ -54,8 +54,12 @@ function handleFiles(fileList) {
     }
 
     if (newFiles.length > 0) {
-        uploadProgress.value = 0;
-        uploadProgress.style.display = 'block';
+        const progressBar = document.getElementById('uploadProgress');
+        progressBar.style.setProperty('--progress', '0%');
+        progressBar.setAttribute('data-progress', '0');
+        progressBar.style.display = 'block';
+        progressBar.classList.add('uploading');
+        
         const progressInterval = setInterval(() => {
             if (uploadedFiles < newFiles.length) {
                 const file = newFiles[uploadedFiles];
@@ -67,6 +71,7 @@ function handleFiles(fileList) {
             } else {
                 clearInterval(progressInterval);
                 uploadProgress.style.display = 'none';
+                uploadProgress.classList.remove('uploading');
                 if (duplicateFiles.length > 0) {
                     showToast(`Files "${duplicateFiles.join(', ')}" have already been uploaded.`);
                 }
@@ -83,9 +88,13 @@ function handleFiles(fileList) {
 }
 
 function updateProgress(uploadedFiles, totalFiles) {
-    uploadProgress.value = (uploadedFiles / totalFiles) * 100;
+    const percent = (uploadedFiles / totalFiles) * 100;
+    const progressBar = document.getElementById('uploadProgress');
+    progressBar.style.setProperty('--progress', `${percent}%`);
+    progressBar.setAttribute('data-progress', Math.round(percent));
     if (uploadedFiles === totalFiles) {
-        uploadProgress.style.display = 'none';
+        progressBar.style.display = 'none';
+        progressBar.classList.remove('uploading');
     }
 }
 

@@ -82,27 +82,47 @@ h1, h2 {
 /* Progress Bar */
 #uploadProgress {
     width: 100%;
-    margin-top: 20px;
     height: 20px;
-    border-radius: 10px;
     background-color: #f0f0f0;
+    border-radius: 10px;
     overflow: hidden;
     position: relative;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
 
-#uploadProgress::-webkit-progress-bar {
-    background-color: #f0f0f0;
-}
-
-#uploadProgress::-webkit-progress-value {
-    background-color: #3498db;
+#uploadProgress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--progress, 0%);
+    background: linear-gradient(90deg, #3498db, #2980b9);
     transition: width 0.3s ease;
+    border-radius: 10px;
 }
 
-#uploadProgress::-moz-progress-bar {
-    background-color: #3498db;
-    transition: width 0.3s ease;
+#uploadProgress::after {
+    content: attr(data-progress) '%';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+#uploadProgress.uploading::before {
+    animation: pulse 1.5s infinite;
 }
 
 /* File Grid */
@@ -338,8 +358,6 @@ h1, h2 {
 
 /* Modal Styles */
 .modal {
-
-
     display: none;
     position: fixed;
     z-index: 1000;
