@@ -14,6 +14,8 @@ const closeButton = document.getElementsByClassName('close')[0];
 const previewFileName = document.getElementById('previewFileName');
 const previewContent = document.getElementById('previewContent');
 const uploadProgress = document.getElementById('uploadProgress');
+const combineProgress = document.getElementById('combineProgress');
+const loadingText = document.getElementById('loadingText');
 let files = [];
 
 // Event Listeners
@@ -54,11 +56,9 @@ function handleFiles(fileList) {
     }
 
     if (newFiles.length > 0) {
-        const progressBar = document.getElementById('uploadProgress');
-        progressBar.style.setProperty('--progress', '0%');
-        progressBar.setAttribute('data-progress', '0');
-        progressBar.style.display = 'block';
-        progressBar.classList.add('uploading');
+        uploadProgress.style.display = 'block';
+        uploadProgress.querySelector('.progress-fill').style.width = '0%';
+        uploadProgress.querySelector('.progress-text').textContent = '0%';
         
         const progressInterval = setInterval(() => {
             if (uploadedFiles < newFiles.length) {
@@ -71,7 +71,6 @@ function handleFiles(fileList) {
             } else {
                 clearInterval(progressInterval);
                 uploadProgress.style.display = 'none';
-                uploadProgress.classList.remove('uploading');
                 if (duplicateFiles.length > 0) {
                     showToast(`Files "${duplicateFiles.join(', ')}" have already been uploaded.`);
                 }
@@ -89,12 +88,12 @@ function handleFiles(fileList) {
 
 function updateProgress(uploadedFiles, totalFiles) {
     const percent = (uploadedFiles / totalFiles) * 100;
-    const progressBar = document.getElementById('uploadProgress');
-    progressBar.style.setProperty('--progress', `${percent}%`);
-    progressBar.setAttribute('data-progress', Math.round(percent));
+    const progressFill = uploadProgress.querySelector('.progress-fill');
+    const progressText = uploadProgress.querySelector('.progress-text');
+    progressFill.style.width = `${percent}%`;
+    progressText.textContent = `${Math.round(percent)}%`;
     if (uploadedFiles === totalFiles) {
-        progressBar.style.display = 'none';
-        progressBar.classList.remove('uploading');
+        uploadProgress.style.display = 'none';
     }
 }
 
@@ -166,6 +165,7 @@ function showToast(message) {
 
 async function combineFiles() {
     loadingIndicator.style.display = 'block';
+    combineProgress.style.display = 'block';
     combinedContentContainer.style.display = 'none';
     let combined = '';
     const fileCards = fileGrid.querySelectorAll('.file-card');
@@ -181,7 +181,7 @@ async function combineFiles() {
                 const content = await file.text();
                 combined += `${fileNumber} ${file.name}\n${content}\n\n`;
                 processedFiles++;
-                updateCombineProgress(processedFiles, totalFiles);
+                await simulateCombineProgress(processedFiles, totalFiles);
             }
         }
         combinedContent.value = combined.trim();
@@ -192,17 +192,23 @@ async function combineFiles() {
         console.error('Error combining files:', error);
     } finally {
         loadingIndicator.style.display = 'none';
-        resetCombineProgress();
+        combineProgress.style.display = 'none';
     }
 }
 
-function updateCombineProgress(processed, total) {
-    const percent = (processed / total) * 100;
-    loadingIndicator.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Combining... ${percent.toFixed(0)}% (${processed}/${total} files)`;
-}
+function simulateCombineProgress(processed, total) {
+    return new Promise(resolve => {
+        const progressFill = combineProgress.querySelector('.progress-fill');
+        const progressText = combineProgress.querySelector('.progress-text');
+        const percent = (processed / total) * 100;
+        const duration = 500 + Math.random() * 1000; // Random duration between 500ms and 1500ms
 
-function resetCombineProgress() {
-    loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Combining...';
+        progressFill.style.width = `${percent}%`;
+        progressText.textContent = `${Math.round(percent)}%`;
+        loadingText.textContent = `Combining... ${processed}/${total} files`;
+
+        setTimeout(resolve, duration);
+    });
 }
 
 function downloadCombinedFile() {
@@ -239,6 +245,7 @@ function clearFiles() {
     fileGrid.innerHTML = '';
     combinedContent.value = '';
     combinedContentContainer.style.display = 'none';
+    combineProgress.style.display = 'none';
     updateButtonStates();
     showToast('All files cleared.');
     console.log('All files cleared');

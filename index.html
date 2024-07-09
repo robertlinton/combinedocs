@@ -16,15 +16,22 @@
             </label>
             <input type="file" id="fileInput" multiple accept=".txt">
             <div id="dropArea" class="drop-area">or drop files here</div>
-            <progress id="uploadProgress" value="0" max="100" style="display: none;"></progress>
+            <div id="uploadProgress" class="progress-bar" style="display: none;">
+                <div class="progress-fill"></div>
+                <div class="progress-text">0%</div>
+            </div>
         </div>
         <div id="fileGrid"></div>
         <div class="button-container">
             <button id="combineButton" class="button primary" disabled>Combine Files</button>
             <button id="clearButton" class="button secondary" disabled>Clear Files</button>
         </div>
+        <div id="combineProgress" class="progress-bar" style="display: none;">
+            <div class="progress-fill"></div>
+            <div class="progress-text">0%</div>
+        </div>
         <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-            <i class="fas fa-spinner fa-spin"></i> Combining...
+            <i class="fas fa-spinner fa-spin"></i> <span id="loadingText">Combining...</span>
         </div>
         <div id="combinedContentContainer" style="display: none;">
             <h2>Combined Content</h2>
