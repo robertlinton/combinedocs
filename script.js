@@ -9,6 +9,8 @@ const clearButton = document.getElementById('clearButton');
 const dropArea = document.getElementById('dropArea');
 const combinedContentContainer = document.getElementById('combinedContentContainer');
 const toast = document.getElementById('toast');
+const toastMessage = toast.querySelector('.toast-message');
+const closeToastButton = toast.querySelector('.close-toast');
 const modal = document.getElementById('previewModal');
 const closeButton = document.getElementsByClassName('close')[0];
 const previewFileName = document.getElementById('previewFileName');
@@ -17,6 +19,7 @@ const uploadProgress = document.getElementById('uploadProgress');
 const combineProgress = document.getElementById('combineProgress');
 const loadingText = document.getElementById('loadingText');
 let files = [];
+let toastTimeout;
 
 // Event Listeners
 fileInput.addEventListener('change', (event) => handleFiles(event.target.files));
@@ -27,6 +30,10 @@ combineButton.addEventListener('click', combineFiles);
 downloadButton.addEventListener('click', downloadCombinedFile);
 copyButton.addEventListener('click', copyToClipboard);
 clearButton.addEventListener('click', clearFiles);
+closeToastButton.addEventListener('click', () => {
+    toast.classList.remove('show');
+    clearTimeout(toastTimeout);
+});
 closeButton.onclick = () => { modal.style.display = 'none'; }
 window.onclick = (event) => {
     if (event.target == modal) {
@@ -158,9 +165,12 @@ function updateButtonStates() {
 }
 
 function showToast(message) {
-    toast.textContent = message;
+    toastMessage.textContent = message;
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 10000); // Hide after 10 seconds
 }
 
 async function combineFiles() {
