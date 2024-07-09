@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Uploader and Combiner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container" id="combineDocsContainer">
+        <h1>Combine Docs</h1>
+        <div class="upload-container">
+            <label for="fileInput" class="file-input-label">
+                <i class="fas fa-cloud-upload-alt"></i> Choose Files
+            </label>
+            <input type="file" id="fileInput" multiple accept=".txt">
+            <div id="dropArea" class="drop-area">or drop files here</div>
+            <progress id="uploadProgress" value="0" max="100" style="display: none;"></progress>
+        </div>
+        <div id="fileGrid"></div>
+        <div class="button-container">
+            <button id="combineButton" class="button primary" disabled>Combine Files</button>
+            <button id="clearButton" class="button secondary" disabled>Clear Files</button>
+        </div>
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i> Combining...
+        </div>
+        <div id="combinedContentContainer" style="display: none;">
+            <h2>Combined Content</h2>
+            <textarea id="combinedContent" readonly placeholder="Your combined text will appear here..."></textarea>
+            <div class="button-container">
+                <button id="downloadButton" class="button primary">
+                    <i class="fas fa-download"></i> Download Combined Text
+                </button>
+                <button id="copyButton" class="button secondary">
+                    <i class="fas fa-copy"></i> Copy to Clipboard
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="toast"></div>
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="previewFileName"></h2>
+            <pre id="previewContent"></pre>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
